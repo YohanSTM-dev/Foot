@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ player.Prenom }} {{ player.Nom }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>{{ player.Prenom }} {{ player.Nom }}</h1>
+    <p>Catégorie : {{ player.CategorieSportive.Nom }}</p>
+    <p>Niveau : {{ player.Niveau.Nom }}</p>
+
+    <h3 class="mt-4">Note moyenne : {{ average }}/5</h3>
+
+    <h4>Avis des utilisateurs :</h4>
+    {% if reviews is not empty %}
+        {% for review in reviews %}
+            <div class="card mb-3 p-3">
+                <strong>{{ review.Utilisateur.Prenom }} {{ review.Utilisateur.Nom }}</strong>
+                <span class="text-muted">– {{ review.DateCreation|date('d/m/Y') }}</span>
+                <p>Note : {{ review.Note }}/5</p>
+                <p>{{ review.Commentaire }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Aucun avis pour ce joueur.</p>
+    {% endif %}
+
+    {% if app.user and reviewForm %}
+        <h4>Ajouter un avis</h4>
+        {{ form_start(reviewForm, {'action': path('app_player_show', {'id': player.Id})}) }}
+            {{ form_row(reviewForm.Note) }}
+            {{ form_row(reviewForm.Commentaire) }}
+            <button class="btn btn-primary">Envoyer</button>
+        {{ form_end(reviewForm) }}
+    {% else %}
+        <p><a href="{{ path('app_login') }}">Connectez-vous</a> pour laisser un avis.</p>
+    {% endif %}
+</div>
+{% endblock %}
